@@ -1,0 +1,25 @@
+// prettier-ignore
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /* Projects */
+
+    /* Language and Environment */
+
+    /* Modules */
+
+    /* JavaScript Support */
+
+    /* Emit */
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./types",
+    "removeComments": false,
+
+    /* Interop Constraints */
+
+    /* Type Checking */
+
+    /* Completeness */
+  }
+}

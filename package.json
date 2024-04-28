@@ -1,0 +1,48 @@
+{
+  "name": "swash",
+  "description": "A React framework for drag and drop interactions",
+  "version": "1.0.0",
+  "author": "Luiz Fernando F. G. Valle <luizffgv10@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/luizffgv/swash/issues"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "rimraf": "^5.0.5",
+    "tsc-alias": "^1.8.8",
+    "typescript": "^5.4.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./*": {
+      "types": "./types/*.d.ts",
+      "default": "./lib/*"
+    }
+  },
+  "files": [
+    "lib/**/*",
+    "types/**/*"
+  ],
+  "homepage": "https://github.com/luizffgv/swash#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luizffgv/swash.git"
+  },
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "generate-types": "tsc -p tsconfig-types.json && tsc-alias -p tsconfig-types.json",
+    "prepare": "npm run rebuild && npm run regenerate-types",
+    "rebuild": "rimraf lib tsconfig.tsbuildinfo && npm run build",
+    "regenerate-types": "rimraf types tsconfig-types.tsbuildinfo && npm run generate-types",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "types": "types/index.d.ts"
+}

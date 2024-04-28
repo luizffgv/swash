@@ -1,0 +1,14 @@
+# NPM dependencies
+node_modules/
+
+# Compiled library
+lib/
+
+# Generated type definitions
+types/
+
+# TypeScript build information
+*.tsbuildinfo
+
+# Packed npm package
+*.tgz
