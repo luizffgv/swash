@@ -135,6 +135,7 @@ export function Draggable(properties: DraggableProperties) {
   // Begins dragging when the draggable is clicked.
   const onDown = (event: React.MouseEvent | React.TouchEvent) => {
     if (dragging) return;
+    if ("button" in event && event.button !== 0) return;
 
     event.preventDefault();
 
