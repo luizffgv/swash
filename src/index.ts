@@ -5,6 +5,7 @@ export { Draggable } from "#/components/Draggable";
 export { DragReceiver } from "#/components/DragReceiver";
 
 export { EmptySpaceGhost } from "#/components/ghosts/EmptySpaceGhost";
+export { ShrinkingGhost } from "#/components/ghosts/ShrinkingGhost";
 
 export * from "#/events";
 
