@@ -7,6 +7,6 @@ export { DragReceiver } from "#/components/DragReceiver";
 export { EmptySpaceGhost } from "#/components/ghosts/EmptySpaceGhost";
 export { ShrinkingGhost } from "#/components/ghosts/ShrinkingGhost";
 
-export * from "#/events";
+export { Payload, EmptyPayload } from "#/payload";
 
-export * from "#/payload";
+export * from "#/events";

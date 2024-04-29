@@ -45,19 +45,18 @@ draggable, which may handle it if the `onReply` property is provided.
 
 ### Creating custom payloads
 
-Swash tries to be type-safe. To add a custom payload, you can augment the
-`PayloadTypeMap` interface like this:
+Swash payloads are type-safe. To create a new payload type, you can extend the
+`Payload` generic class like this:
 
 ```ts
-declare module "swash" {
-  interface PayloadTypeMap {
-    person: { name: string; age: number };
-  }
-}
+export class PersonPayload extends Payload<Person> {}
 ```
 
-The code above will create a new payload type `"person"` that has the shape
-`{ name: string; age: number }`.
+You will then be able to construct a new `PersonPayload` passing a value of type
+`Person` to its constructor.
+
+You can check which payload type was received in an event using the `instanceof`
+operator.
 
 ### Displaying ghosts
 

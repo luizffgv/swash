@@ -5,7 +5,7 @@ import {
   SwashDropEvent,
   ReplyHandler,
 } from "#/events";
-import { Payload } from "#/payload";
+import { EmptyPayload, Payload } from "#/payload";
 import { receiverTag } from "#/tags";
 import { DraggableContext } from "#/context/draggable";
 import { GhostContext } from "#/context/ghost";
@@ -23,10 +23,7 @@ export function Draggable(properties: DraggableProperties) {
 
   const container = useRef<HTMLDivElement>(null);
 
-  const [payload, setPayload] = useState<Payload>({
-    type: "empty",
-    value: undefined,
-  });
+  const [payload, setPayload] = useState<Payload>(new EmptyPayload());
 
   const [dragging, setDragging] = useState(false);
   /** Offset of the draggable relative to the mouse position. */
