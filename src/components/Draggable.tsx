@@ -16,10 +16,14 @@ export interface DraggableProperties {
   ghost?: React.ReactNode | undefined;
   /** Callback for handling event replies created by DND receivers.  */
   onReply?: ReplyHandler | undefined;
+  /**
+   * Z index to apply to the draggable when it is being dragged. Default is `1`.
+   */
+  dragZIndex?: number | undefined;
 }
 
 export function Draggable(properties: DraggableProperties) {
-  const { onReply } = properties;
+  const { onReply, dragZIndex = 1 } = properties;
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -178,6 +182,7 @@ export function Draggable(properties: DraggableProperties) {
           pointerEvents: dragging ? "none" : "auto",
           position: dragging ? "fixed" : "static",
           touchAction: "none",
+          zIndex: dragging ? dragZIndex : "auto",
         }}
       >
         {properties.children}
