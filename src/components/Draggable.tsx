@@ -111,13 +111,14 @@ export function Draggable(properties: DraggableProperties) {
 
       let eventX: number;
       let eventY: number;
-      if (event instanceof TouchEvent) {
+      // TouchEvent isn't defined for Firefox desktop
+      if ("TouchEvent" in window && event instanceof TouchEvent) {
         const touch = [...event.changedTouches].find(
           ({ identifier }) => identifier === touchID.current
         );
         if (touch == null) return;
         ({ clientX: eventX, clientY: eventY } = touch);
-      } else if (touchID.current == null) {
+      } else if (event instanceof MouseEvent && touchID.current == null) {
         ({ clientX: eventX, clientY: eventY } = event);
       } else {
         return;
