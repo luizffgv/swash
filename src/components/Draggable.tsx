@@ -246,7 +246,11 @@ export function Draggable(properties: DraggableProperties) {
           onMouseDown={onDown}
           onTouchStart={onDown}
           style={{
-            cursor: dragging ? "auto" : "pointer",
+            /* NOTE
+               It looks like the cursor is a 🚫 symbol on Chrome+Windows when
+               the cursor is auto with pointer-events: none, so we override it
+               by "grab". On Linux this has no effect. */
+            cursor: dragging ? "grab" : "pointer",
             gridArea: "stack",
             pointerEvents: dragging ? "none" : "auto",
             position: dragging ? "fixed" : "static",
