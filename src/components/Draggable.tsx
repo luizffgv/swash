@@ -171,9 +171,11 @@ export function Draggable(properties: DraggableProperties) {
       return;
     }
 
-    // Used to ignore the promise resolution if something else changed the
-    // state. This avoids the state being set to idle after it was set to
-    // something else.
+    /**
+     * Used to ignore the promise resolution if something else changed the
+     * state. This avoids the state being set to idle after it was set to
+     * something else.
+     */
     let ignore = false;
     returnedPromise.current.then(() => {
       if (!ignore) setState("idle");
