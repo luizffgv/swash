@@ -1,10 +1,34 @@
 import { createContext } from "react";
 import { Payload } from "#/payload";
+import { DraggableState } from "#/lib/draggable-state";
 
 /** Context type for {@link DraggableContext}. */
 export interface DraggableContextType {
-  /** Whether the draggable is currently being dragged. */
-  readonly dragging: boolean;
+  /** Current state of the the draggable. */
+  readonly state: DraggableState;
+
+  /**
+   * The last position of the draggable while it was being dragged.
+   * The value is not guaranteed to be correct before the first drag.
+   */
+  readonly lastDragPosition: Readonly<{ x: number; y: number }>;
+
+  /**
+   * Sets the promise to wait for before transitioning the draggable state from
+   * `returning` to `idle`.
+   *
+   * The promise should ideally be set during the `dragging` state, to avoid
+   * being reset by `idle` and being set after `returning` has already begun
+   * transitioning to `idle`.
+   *
+   * The provided promise is thrown away when the draggable goes back to the
+   * `idle` state. It must be provided again.
+   *
+   * A use case for this is components that implement custom draggable return
+   * animations.
+   * @param promise - Promise to wait for.
+   */
+  setReturnedPromise(promise: Promise<void>): void;
 
   /**
    * Sets the payload to be sent to the DND receiver when the user drops the
@@ -16,7 +40,11 @@ export interface DraggableContextType {
 
 /** Default value for {@link DraggableContext}. */
 export const draggableContextDefaultValue: DraggableContextType = {
-  dragging: false,
+  state: "idle",
+  lastDragPosition: { x: 0, y: 0 },
+  setReturnedPromise: () => {
+    console.warn("Called setReturnedPromise on the default DraggableContext.");
+  },
   setPayload: () => {
     console.warn("Called setPayload on the default DraggableContext.");
   },

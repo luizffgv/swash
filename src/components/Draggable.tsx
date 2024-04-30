@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
@@ -9,6 +9,7 @@ import { EmptyPayload, Payload } from "#/payload";
 import { receiverTag } from "#/tags";
 import { DraggableContext } from "#/context/draggable";
 import { GhostContext } from "#/context/ghost";
+import { DraggableState } from "#/lib/draggable-state";
 
 export interface DraggableProperties {
   children: React.ReactNode;
@@ -17,25 +18,36 @@ export interface DraggableProperties {
   /** Callback for handling event replies created by DND receivers.  */
   onReply?: ReplyHandler | undefined;
   /**
-   * Z index to apply to the draggable when it is being dragged. Default is `1`.
+   * Z index to apply to the draggable when it is not idle (i.e. it is being
+   * dragged or returning).
+   *
+   * Default is `1`.
    */
-  dragZIndex?: number | undefined;
+  activeZIndex?: number | undefined;
 }
 
 export function Draggable(properties: DraggableProperties) {
-  const { onReply, dragZIndex = 1 } = properties;
+  const { onReply, activeZIndex: dragZIndex = 1 } = properties;
 
   const container = useRef<HTMLDivElement>(null);
 
   const [payload, setPayload] = useState<Payload>(new EmptyPayload());
 
-  const [dragging, setDragging] = useState(false);
+  const [state, setState] = useState<DraggableState>("idle");
+  const idle = state === "idle";
+  const dragging = state === "dragging";
+  const returning = state === "returning";
+
   /** Offset of the draggable relative to the mouse position. */
   const dragOffset = useRef({ x: 0, y: 0 });
   /** Identifier of the touch object being tracked. */
   const touchID = useRef<number>();
   /** Last hovered receiver element, if any. */
   const hoveredReceiver = useRef<Element | null>();
+  /** Last position of the draggable while it was being dragged. */
+  const lastDragPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  /** Promise awaited before transitioning from `returning` to `idle`. */
+  const returnedPromise = useRef<Promise<void>>();
 
   // Size of the ghost element. Determined when the draggable starts being
   // dragged.
@@ -46,21 +58,28 @@ export function Draggable(properties: DraggableProperties) {
 
   // Reset touchID when the draggable stops being dragged.
   useEffect(() => {
-    if (dragging) return;
+    if (state !== "dragging") {
+      touchID.current = undefined;
+    }
+  }, [state]);
 
-    touchID.current = undefined;
-  }, [dragging]);
+  // Reset returnedPromise when the draggable becomes idle.
+  useEffect(() => {
+    if (state === "idle") {
+      returnedPromise.current = undefined;
+    }
+  }, [state]);
 
   // Fire a DND drag leave event when the state changes to not dragging if there
   // is a receiver that was being hovered.
   useEffect(() => {
-    if (dragging || hoveredReceiver.current == null) return;
+    if (!idle || hoveredReceiver.current == null) return;
 
     hoveredReceiver.current?.dispatchEvent(
       new SwashDragLeaveEvent(payload, onReply)
     );
     hoveredReceiver.current = undefined;
-  }, [dragging, onReply, payload]);
+  }, [state, onReply, payload]);
 
   // Logic to execute when the draggable is being dragged.
   useEffect(() => {
@@ -84,7 +103,7 @@ export function Draggable(properties: DraggableProperties) {
         new SwashDropEvent(payload, onReply)
       );
 
-      setDragging(false);
+      setState("returning");
     };
 
     const onMove = (event: MouseEvent | TouchEvent) => {
@@ -105,8 +124,14 @@ export function Draggable(properties: DraggableProperties) {
       }
 
       const { x: offsetX, y: offsetY } = dragOffset.current;
-      currentContainer.style.top = `${eventY + offsetY}px`;
-      currentContainer.style.left = `${eventX + offsetX}px`;
+      const draggableX = eventX + offsetX;
+      const draggableY = eventY + offsetY;
+
+      lastDragPosition.current.x = draggableX;
+      lastDragPosition.current.y = draggableY;
+
+      currentContainer.style.top = `${draggableY}px`;
+      currentContainer.style.left = `${draggableX}px`;
 
       let hovered = document.elementFromPoint(eventX, eventY);
       while (hovered != null && hovered[receiverTag] !== true) {
@@ -134,11 +159,33 @@ export function Draggable(properties: DraggableProperties) {
       removeEventListener("mousemove", onMove);
       removeEventListener("touchmove", onMove);
     };
-  }, [dragging, payload, onReply]);
+  }, [state, payload, onReply]);
+
+  // Wait for the draggable to be returned before idling.
+  useEffect(() => {
+    if (!returning) return;
+
+    if (returnedPromise.current == null) {
+      setState("idle");
+      return;
+    }
+
+    // Used to ignore the promise resolution if something else changed the
+    // state. This avoids the state being set to idle after it was set to
+    // something else.
+    let ignore = false;
+    returnedPromise.current.then(() => {
+      if (!ignore) setState("idle");
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [state]);
 
   // Begins dragging when the draggable is clicked.
   const onDown = (event: React.MouseEvent | React.TouchEvent) => {
-    if (dragging) return;
+    if (!idle) return;
     if ("button" in event && event.button !== 0) return;
 
     event.preventDefault();
@@ -148,6 +195,9 @@ export function Draggable(properties: DraggableProperties) {
       currentContainer.getBoundingClientRect();
     currentContainer.style.top = `${top}px`;
     currentContainer.style.left = `${left}px`;
+
+    lastDragPosition.current.x = left;
+    lastDragPosition.current.y = top;
 
     let eventX: number;
     let eventY: number;
@@ -163,31 +213,48 @@ export function Draggable(properties: DraggableProperties) {
 
     setGhostSize({ width, height });
 
-    setDragging(true);
+    setState("dragging");
   };
 
   return (
-    <DraggableContext.Provider value={{ dragging, setPayload }}>
-      {dragging && (
-        <GhostContext.Provider value={{ ...ghostSize }}>
-          {properties.ghost}
-        </GhostContext.Provider>
-      )}
-      <div
-        ref={container}
-        onMouseDown={onDown}
-        onTouchStart={onDown}
-        style={{
-          cursor: dragging ? "auto" : "pointer",
-          pointerEvents: dragging ? "none" : "auto",
-          position: dragging ? "fixed" : "static",
-          touchAction: "none",
-          zIndex: dragging ? dragZIndex : "auto",
+    <div
+      style={{
+        display: "grid",
+        gridTemplateAreas: "stack",
+      }}
+    >
+      <DraggableContext.Provider
+        value={{
+          state,
+          setPayload,
+          setReturnedPromise: useCallback((promise) => {
+            returnedPromise.current = promise;
+          }, []),
+          lastDragPosition: lastDragPosition.current,
         }}
       >
-        {properties.children}
-      </div>
-    </DraggableContext.Provider>
+        <div style={{ gridArea: "stack" }}>
+          <GhostContext.Provider value={{ ...ghostSize }}>
+            {state !== "idle" && properties.ghost}
+          </GhostContext.Provider>
+        </div>
+        <div
+          ref={container}
+          onMouseDown={onDown}
+          onTouchStart={onDown}
+          style={{
+            cursor: dragging ? "auto" : "pointer",
+            gridArea: "stack",
+            pointerEvents: dragging ? "none" : "auto",
+            position: dragging ? "fixed" : "static",
+            touchAction: "none",
+            zIndex: !idle ? dragZIndex : "auto",
+          }}
+        >
+          {properties.children}
+        </div>
+      </DraggableContext.Provider>
+    </div>
   );
 }
 
