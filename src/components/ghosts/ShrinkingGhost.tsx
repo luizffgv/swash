@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { GhostContext } from "#/context/ghost";
+import { DraggableContext } from "#/context/draggable";
 
 /** Properties for the {@link ShrinkingGhost} component. */
 export interface ShrinkingGhostProperties {
@@ -16,25 +17,31 @@ export function ShrinkingGhost(properties: ShrinkingGhostProperties) {
 
   const { width, height } = useContext(GhostContext);
 
-  const [painted, setPainted] = useState(false);
+  const {
+    states: { dragging },
+  } = useContext(DraggableContext);
+
+  const [shrinked, setShrinked] = useState(false);
 
   useEffect(() => {
-    let handle: number | undefined = requestAnimationFrame(() => {
-      handle = undefined;
-      setPainted(true);
-    });
+    if (dragging) {
+      let handle: number | undefined = requestAnimationFrame(() => {
+        handle = undefined;
+        setShrinked(true);
+      });
 
-    return () => {
-      if (handle != null) cancelAnimationFrame(handle);
-      setPainted(false);
-    };
-  }, []);
+      return () => {
+        if (handle != null) cancelAnimationFrame(handle);
+        setShrinked(false);
+      };
+    }
+  }, [dragging]);
 
   return (
     <div
       style={{
-        width: painted ? 0 : `${width}px`,
-        height: painted ? 0 : `${height}px`,
+        width: shrinked ? 0 : `${width}px`,
+        height: shrinked ? 0 : `${height}px`,
         transition: `all ${duration}ms`,
       }}
     ></div>
