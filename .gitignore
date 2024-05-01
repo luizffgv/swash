@@ -1,6 +1,9 @@
 # NPM dependencies
 /node_modules/
 
+# Built website
+/dist/
+
 # Compiled library
 /lib/
 
