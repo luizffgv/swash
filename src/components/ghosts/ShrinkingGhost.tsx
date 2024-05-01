@@ -19,7 +19,15 @@ export function ShrinkingGhost(properties: ShrinkingGhostProperties) {
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
-    setRendered(true);
+    let handle: number | undefined = requestAnimationFrame(() => {
+      handle = undefined;
+      setRendered(true);
+    });
+
+    return () => {
+      if (handle != null) cancelAnimationFrame(handle);
+      setRendered(false);
+    };
   }, []);
 
   return (
