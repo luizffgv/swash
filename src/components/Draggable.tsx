@@ -34,9 +34,19 @@ export function Draggable(properties: DraggableProperties) {
   const [payload, setPayload] = useState<Payload>(new EmptyPayload());
 
   const [state, setState] = useState<DraggableState>("idle");
-  const idle = state === "idle";
-  const dragging = state === "dragging";
-  const returning = state === "returning";
+  let states;
+  switch (state) {
+    case "idle":
+      states = { idle: true, dragging: false, returning: false } as const;
+      break;
+    case "dragging":
+      states = { idle: false, dragging: true, returning: false } as const;
+      break;
+    case "returning":
+      states = { idle: false, dragging: false, returning: true } as const;
+      break;
+  }
+  const { idle, dragging, returning } = states;
 
   /** Offset of the draggable relative to the mouse position. */
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -245,7 +255,7 @@ export function Draggable(properties: DraggableProperties) {
     >
       <DraggableContext.Provider
         value={{
-          state,
+          states,
           setPayload,
           setReturnedPromise: useCallback((promise) => {
             returnedPromise.current = promise;

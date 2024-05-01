@@ -1,11 +1,14 @@
 import { createContext } from "react";
 import { Payload } from "#/payload";
-import { DraggableState } from "#/lib/draggable-state";
+import { DraggableStateMap } from "#/lib/draggable-state";
 
 /** Context type for {@link DraggableContext}. */
 export interface DraggableContextType {
-  /** Current state of the the draggable. */
-  readonly state: DraggableState;
+  /**
+   * {@link DraggableStateMap} representing the current state of the the
+   * draggable.
+   */
+  readonly states: DraggableStateMap;
 
   /**
    * The last position of the draggable while it was being dragged.
@@ -40,7 +43,7 @@ export interface DraggableContextType {
 
 /** Default value for {@link DraggableContext}. */
 export const draggableContextDefaultValue: DraggableContextType = {
-  state: "idle",
+  states: { idle: true, dragging: false, returning: false },
   lastDragPosition: { x: 0, y: 0 },
   setReturnedPromise: () => {
     console.warn("Called setReturnedPromise on the default DraggableContext.");
