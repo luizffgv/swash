@@ -193,6 +193,7 @@ export function Draggable(properties: DraggableProperties) {
     const onDown = (event: MouseEvent | TouchEvent) => {
       if (!idle) return;
       if ("button" in event && event.button !== 0) return;
+      if (!event.cancelable) return;
 
       event.preventDefault();
 
