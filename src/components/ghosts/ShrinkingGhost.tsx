@@ -16,25 +16,25 @@ export function ShrinkingGhost(properties: ShrinkingGhostProperties) {
 
   const { width, height } = useContext(GhostContext);
 
-  const [rendered, setRendered] = useState(false);
+  const [painted, setPainted] = useState(false);
 
   useEffect(() => {
     let handle: number | undefined = requestAnimationFrame(() => {
       handle = undefined;
-      setRendered(true);
+      setPainted(true);
     });
 
     return () => {
       if (handle != null) cancelAnimationFrame(handle);
-      setRendered(false);
+      setPainted(false);
     };
   }, []);
 
   return (
     <div
       style={{
-        width: rendered ? 0 : `${width}px`,
-        height: rendered ? 0 : `${height}px`,
+        width: painted ? 0 : `${width}px`,
+        height: painted ? 0 : `${height}px`,
         transition: `all ${duration}ms`,
       }}
     ></div>
