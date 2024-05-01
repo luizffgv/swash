@@ -86,6 +86,8 @@ export function Draggable(properties: DraggableProperties) {
     if (!dragging) return;
 
     const onUp = (event: MouseEvent | TouchEvent) => {
+      if ("button" in event && event.button !== 0) return;
+
       event.preventDefault();
 
       if (touchID.current != null) {
