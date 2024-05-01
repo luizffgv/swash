@@ -186,38 +186,52 @@ export function Draggable(properties: DraggableProperties) {
     };
   }, [state]);
 
-  // Begins dragging when the draggable is clicked.
-  const onDown = (event: React.MouseEvent | React.TouchEvent) => {
+  useEffect(() => {
     if (!idle) return;
-    if ("button" in event && event.button !== 0) return;
 
-    event.preventDefault();
+    // Begins dragging when the draggable is clicked.
+    const onDown = (event: MouseEvent | TouchEvent) => {
+      if (!idle) return;
+      if ("button" in event && event.button !== 0) return;
+
+      event.preventDefault();
+
+      const currentContainer = container.current!;
+      const { top, left, width, height } =
+        currentContainer.getBoundingClientRect();
+      currentContainer.style.top = `${top}px`;
+      currentContainer.style.left = `${left}px`;
+
+      lastDragPosition.current.x = left;
+      lastDragPosition.current.y = top;
+
+      let eventX: number;
+      let eventY: number;
+      if ("changedTouches" in event) {
+        const touch = event.changedTouches[0];
+        touchID.current = touch.identifier;
+        ({ clientX: eventX, clientY: eventY } = touch);
+      } else {
+        ({ clientX: eventX, clientY: eventY } = event);
+      }
+
+      dragOffset.current = { x: left - eventX, y: top - eventY };
+
+      setGhostSize({ width, height });
+
+      setState("dragging");
+    };
 
     const currentContainer = container.current!;
-    const { top, left, width, height } =
-      currentContainer.getBoundingClientRect();
-    currentContainer.style.top = `${top}px`;
-    currentContainer.style.left = `${left}px`;
 
-    lastDragPosition.current.x = left;
-    lastDragPosition.current.y = top;
+    currentContainer.addEventListener("mousedown", onDown);
+    currentContainer.addEventListener("touchstart", onDown);
 
-    let eventX: number;
-    let eventY: number;
-    if ("changedTouches" in event) {
-      const touch = event.changedTouches[0];
-      touchID.current = touch.identifier;
-      ({ clientX: eventX, clientY: eventY } = touch);
-    } else {
-      ({ clientX: eventX, clientY: eventY } = event);
-    }
-
-    dragOffset.current = { x: left - eventX, y: top - eventY };
-
-    setGhostSize({ width, height });
-
-    setState("dragging");
-  };
+    return () => {
+      currentContainer.removeEventListener("mousedown", onDown);
+      currentContainer.removeEventListener("touchstart", onDown);
+    };
+  }, [state]);
 
   return (
     <div
@@ -243,8 +257,6 @@ export function Draggable(properties: DraggableProperties) {
         </div>
         <div
           ref={container}
-          onMouseDown={onDown}
-          onTouchStart={onDown}
           style={{
             /* NOTE
                It looks like the cursor is a 🚫 symbol on Chrome+Windows when
