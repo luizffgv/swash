@@ -163,12 +163,14 @@ export function Draggable(properties: DraggableProperties) {
 
     addEventListener("mouseup", onUp);
     addEventListener("touchend", onUp);
+    addEventListener("touchcancel", onUp);
     addEventListener("mousemove", onMove);
     addEventListener("touchmove", onMove);
 
     return () => {
       removeEventListener("mouseup", onUp);
       removeEventListener("touchend", onUp);
+      removeEventListener("touchcancel", onUp);
       removeEventListener("mousemove", onMove);
       removeEventListener("touchmove", onMove);
     };
