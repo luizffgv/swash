@@ -10,6 +10,9 @@ import { receiverTag } from "#/tags";
 import { DraggableContext } from "#/context/draggable";
 import { GhostContext } from "#/context/ghost";
 import { DraggableState } from "#/lib/draggable-state";
+import { InnerDraggable } from "./InnerDraggable";
+import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { Dimensions } from "#/lib/dimensions";
 
 export interface DraggableProperties {
   children: React.ReactNode;
@@ -61,7 +64,7 @@ export function Draggable(properties: DraggableProperties) {
 
   // Size of the ghost element. Determined when the draggable starts being
   // dragged.
-  const [ghostSize, setGhostSize] = useState({
+  const [ghostSize, setGhostSize] = useState<Dimensions>({
     width: Number.NaN,
     height: Number.NaN,
   });
@@ -212,8 +215,7 @@ export function Draggable(properties: DraggableProperties) {
       event.preventDefault();
 
       const currentContainer = container.current!;
-      const { top, left, width, height } =
-        currentContainer.getBoundingClientRect();
+      const { top, left } = currentContainer.getBoundingClientRect();
       currentContainer.style.top = `${top}px`;
       currentContainer.style.left = `${left}px`;
 
@@ -231,8 +233,6 @@ export function Draggable(properties: DraggableProperties) {
       }
 
       dragOffset.current = { x: left - eventX, y: top - eventY };
-
-      setGhostSize({ width, height });
 
       setState("dragging");
     };
@@ -270,23 +270,38 @@ export function Draggable(properties: DraggableProperties) {
             {state !== "idle" && properties.ghost}
           </GhostContext.Provider>
         </div>
-        <div
-          ref={container}
-          style={{
-            /* NOTE
-               It looks like the cursor is a 🚫 symbol on Chrome+Windows when
-               the cursor is auto with pointer-events: none, so we override it
-               by "grab". On Linux this has no effect. */
-            cursor: dragging ? "grab" : "pointer",
-            gridArea: "stack",
-            pointerEvents: dragging ? "none" : "auto",
-            position: dragging ? "fixed" : "static",
-            touchAction: "none",
-            zIndex: !idle ? dragZIndex : "auto",
+        <IdleDraggableSizeContext.Provider
+          value={{
+            propagateDimensions: (dimensions) =>
+              setGhostSize(
+                dimensions ?? { width: Number.NaN, height: Number.NaN }
+              ),
+            leaveProxyMode: () => {
+              // This is a no-op since the Draggable root is always in a proxy
+              // mode.
+            },
           }}
         >
-          {properties.children}
-        </div>
+          <InnerDraggable>
+            <div
+              ref={container}
+              style={{
+                /* NOTE
+                   It looks like the cursor is a 🚫 symbol on Chrome+Windows
+                   when the cursor is auto with pointer-events: none, so we
+                   override it by "grab". On Linux this has no effect. */
+                cursor: dragging ? "grab" : "pointer",
+                gridArea: "stack",
+                pointerEvents: dragging ? "none" : "auto",
+                position: dragging ? "fixed" : "static",
+                touchAction: "none",
+                zIndex: !idle ? dragZIndex : "auto",
+              }}
+            >
+              {properties.children}
+            </div>
+          </InnerDraggable>
+        </IdleDraggableSizeContext.Provider>
       </DraggableContext.Provider>
     </div>
   );

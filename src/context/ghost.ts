@@ -2,9 +2,9 @@ import { createContext } from "react";
 
 /** Context type used for implementing DND ghosts. */
 export interface GhostContext {
-  /** Width of the draggable element at the time the drag started. */
+  /** Current width of the draggable element. */
   readonly width: number;
-  /** Height of the draggable element at the time the drag started. */
+  /** Current height of the draggable element. */
   readonly height: number;
 }
 
