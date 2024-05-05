@@ -57,11 +57,7 @@ export function DragReceiver(properties: DragReceiverProperties) {
     };
   }, [onSwashDragEnter, onSwashDragLeave, onSwashDrop]);
 
-  return (
-    <div ref={container} style={{ display: "contents" }}>
-      {properties.children}
-    </div>
-  );
+  return <div ref={container}>{properties.children}</div>;
 }
 
 export default DragReceiver;

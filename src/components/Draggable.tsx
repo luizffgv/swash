@@ -149,10 +149,9 @@ export function Draggable(properties: DraggableProperties) {
       currentContainer.style.top = `${draggableY}px`;
       currentContainer.style.left = `${draggableX}px`;
 
-      let hovered = document.elementFromPoint(eventX, eventY);
-      while (hovered != null && hovered[receiverTag] !== true) {
-        hovered = hovered.parentElement;
-      }
+      const hovered = document
+        .elementsFromPoint(eventX, eventY)
+        .find((element) => element[receiverTag] === true);
 
       if (hoveredReceiver.current !== hovered) {
         hovered?.dispatchEvent(new SwashDragEnterEvent(payload, onReply));
@@ -286,13 +285,8 @@ export function Draggable(properties: DraggableProperties) {
             <div
               ref={container}
               style={{
-                /* NOTE
-                   It looks like the cursor is a 🚫 symbol on Chrome+Windows
-                   when the cursor is auto with pointer-events: none, so we
-                   override it by "grab". On Linux this has no effect. */
                 cursor: dragging ? "grab" : "pointer",
                 gridArea: "stack",
-                pointerEvents: dragging ? "none" : "auto",
                 position: dragging ? "fixed" : "static",
                 touchAction: "none",
                 zIndex: !idle ? dragZIndex : "auto",
