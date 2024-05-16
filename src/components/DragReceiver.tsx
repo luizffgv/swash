@@ -5,6 +5,7 @@ import {
 } from "#/events";
 import { useEffect, useRef } from "react";
 import { receiverTag } from "#/tags";
+import { throwIfNull } from "ekranoplan/types/conversions";
 
 export interface DragReceiverProperties {
   /** Callback for handling the {@link SwashDragEnterEvent} event. */
@@ -32,14 +33,14 @@ export function DragReceiver(properties: DragReceiverProperties) {
 
   // Set the container as a DND receiver
   useEffect(() => {
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer[receiverTag] = true;
   }, []);
 
   // Setup listeners
   useEffect(() => {
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer.addEventListener("swash-drag-enter", onSwashDragEnter);
     currentContainer.addEventListener("swash-drag-leave", onSwashDragLeave);

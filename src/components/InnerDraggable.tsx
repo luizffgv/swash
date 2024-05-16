@@ -34,6 +34,7 @@ proxy mode. */
 import { useContext, useLayoutEffect, useRef } from "react";
 import { Dimensions } from "#/lib/dimensions";
 import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { throwIfNull } from "ekranoplan/types/conversions";
 
 export interface InnerDraggableProperties {
   children: React.ReactNode;
@@ -78,7 +79,7 @@ export function InnerDraggable(properties: InnerDraggableProperties) {
         propagateDimensions(selfDimensions.current);
       }
     });
-    observer.observe(containerRef.current!);
+    observer.observe(throwIfNull(containerRef.current));
 
     return () => {
       observer.disconnect();

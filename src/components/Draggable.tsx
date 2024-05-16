@@ -13,6 +13,7 @@ import { GhostContext } from "#/context/ghost";
 import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
 import { InnerDraggable } from "./InnerDraggable";
 import { receiverTag } from "#/tags";
+import { throwIfNull } from "ekranoplan/types/conversions";
 
 export interface DraggableProperties {
   children: React.ReactNode;
@@ -133,7 +134,7 @@ export function Draggable(properties: DraggableProperties) {
     };
 
     const onMove = (event: MouseEvent | TouchEvent) => {
-      const currentContainer = container.current!;
+      const currentContainer = throwIfNull(container.current);
 
       let eventX: number;
       let eventY: number;
@@ -235,7 +236,7 @@ export function Draggable(properties: DraggableProperties) {
 
       event.preventDefault();
 
-      const currentContainer = container.current!;
+      const currentContainer = throwIfNull(container.current);
       const { top, left } = currentContainer.getBoundingClientRect();
       currentContainer.style.top = `${top}px`;
       currentContainer.style.left = `${left}px`;
@@ -258,7 +259,7 @@ export function Draggable(properties: DraggableProperties) {
       setState("dragging");
     };
 
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer.addEventListener("mousedown", onDown);
     currentContainer.addEventListener("touchstart", onDown);

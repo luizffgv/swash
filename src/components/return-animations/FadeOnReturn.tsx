@@ -7,6 +7,7 @@ import {
 } from "react";
 import { DraggableContext } from "#/context/draggable";
 import { InnerDraggable } from "#/components/InnerDraggable";
+import { throwIfNull } from "ekranoplan/types/conversions";
 
 /** Steps of the fade animation. */
 type FadeStep = "none" | "hiding" | "appearing";
@@ -70,7 +71,7 @@ export function FadeOnReturn(properties: Readonly<FadeOnReturnProperties>) {
       if (step === "hiding") {
         setStep("appearing");
       } else {
-        returnedPromiseResolve.current!();
+        throwIfNull(returnedPromiseResolve.current)();
       }
     });
     if (step === "hiding") {
