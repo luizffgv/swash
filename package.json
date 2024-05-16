@@ -55,5 +55,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "types": "types/index.d.ts"
+  "types": "types/index.d.ts",
+  "dependencies": {
+    "ekranoplan": "github:luizffgv/ekranoplan#2744eae"
+  }
 }
