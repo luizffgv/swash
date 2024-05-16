@@ -1,18 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import * as ekranoplan from "ekranoplan";
+import { EmptyPayload, Payload } from "#/payload";
 import {
+  ReplyHandler,
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
   SwashDropEvent,
-  ReplyHandler,
 } from "#/events";
-import { EmptyPayload, Payload } from "#/payload";
-import { receiverTag } from "#/tags";
-import { DraggableContext } from "#/context/draggable";
-import { GhostContext } from "#/context/ghost";
-import { DraggableState } from "#/lib/draggable-state";
-import { InnerDraggable } from "./InnerDraggable";
-import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions } from "#/lib/dimensions";
+import { DraggableContext } from "#/context/draggable";
+import { DraggableState } from "#/lib/draggable-state";
+import { GhostContext } from "#/context/ghost";
+import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { InnerDraggable } from "./InnerDraggable";
+import { receiverTag } from "#/tags";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 export interface DraggableProperties {
   children: React.ReactNode;
@@ -30,7 +33,7 @@ export interface DraggableProperties {
 }
 
 export function Draggable(properties: DraggableProperties) {
-  const { onReply, activeZIndex: dragZIndex = 1 } = properties;
+  const { children, ghost, onReply, activeZIndex: dragZIndex = 1 } = properties;
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -39,15 +42,18 @@ export function Draggable(properties: DraggableProperties) {
   const [state, setState] = useState<DraggableState>("idle");
   let states;
   switch (state) {
-    case "idle":
+    case "idle": {
       states = { idle: true, dragging: false, returning: false } as const;
       break;
-    case "dragging":
+    }
+    case "dragging": {
       states = { idle: false, dragging: true, returning: false } as const;
       break;
-    case "returning":
+    }
+    case "returning": {
       states = { idle: false, dragging: false, returning: true } as const;
       break;
+    }
   }
   const { idle, dragging, returning } = states;
 
@@ -86,9 +92,11 @@ export function Draggable(properties: DraggableProperties) {
   // Fire a DND drag leave event when the state changes to not dragging if there
   // is a receiver that was being hovered.
   useEffect(() => {
-    if (!idle || hoveredReceiver.current == null) return;
+    if (!idle || hoveredReceiver.current == null) {
+      return;
+    }
 
-    hoveredReceiver.current?.dispatchEvent(
+    hoveredReceiver.current.dispatchEvent(
       new SwashDragLeaveEvent(payload, onReply)
     );
     hoveredReceiver.current = undefined;
@@ -96,10 +104,14 @@ export function Draggable(properties: DraggableProperties) {
 
   // Logic to execute when the draggable is being dragged.
   useEffect(() => {
-    if (!dragging) return;
+    if (!dragging) {
+      return;
+    }
 
     const onUp = (event: MouseEvent | TouchEvent) => {
-      if ("button" in event && event.button !== 0) return;
+      if ("button" in event && event.button !== 0) {
+        return;
+      }
 
       event.preventDefault();
 
@@ -111,7 +123,9 @@ export function Draggable(properties: DraggableProperties) {
         const touch = [...event.changedTouches].find(
           ({ identifier }) => identifier === touchID.current
         );
-        if (touch == null) return;
+        if (touch == null) {
+          return;
+        }
       }
 
       hoveredReceiver.current?.dispatchEvent(
@@ -122,7 +136,7 @@ export function Draggable(properties: DraggableProperties) {
     };
 
     const onMove = (event: MouseEvent | TouchEvent) => {
-      const currentContainer = container.current!;
+      const currentContainer = throwIfNull(container.current);
 
       let eventX: number;
       let eventY: number;
@@ -131,7 +145,9 @@ export function Draggable(properties: DraggableProperties) {
         const touch = [...event.changedTouches].find(
           ({ identifier }) => identifier === touchID.current
         );
-        if (touch == null) return;
+        if (touch == null) {
+          return;
+        }
         ({ clientX: eventX, clientY: eventY } = touch);
       } else if (event instanceof MouseEvent && touchID.current == null) {
         ({ clientX: eventX, clientY: eventY } = event);
@@ -180,7 +196,9 @@ export function Draggable(properties: DraggableProperties) {
 
   // Wait for the draggable to be returned before idling.
   useEffect(() => {
-    if (!returning) return;
+    if (!returning) {
+      return;
+    }
 
     if (returnedPromise.current == null) {
       setState("idle");
@@ -193,8 +211,10 @@ export function Draggable(properties: DraggableProperties) {
      * something else.
      */
     let ignore = false;
-    returnedPromise.current.then(() => {
-      if (!ignore) setState("idle");
+    void returnedPromise.current.then(() => {
+      if (!ignore) {
+        setState("idle");
+      }
     });
 
     return () => {
@@ -203,17 +223,22 @@ export function Draggable(properties: DraggableProperties) {
   }, [state]);
 
   useEffect(() => {
-    if (!idle) return;
+    if (!idle) {
+      return;
+    }
 
     // Begins dragging when the draggable is clicked.
     const onDown = (event: MouseEvent | TouchEvent) => {
-      if (!idle) return;
-      if ("button" in event && event.button !== 0) return;
-      if (!event.cancelable) return;
+      if ("button" in event && event.button !== 0) {
+        return;
+      }
+      if (!event.cancelable) {
+        return;
+      }
 
       event.preventDefault();
 
-      const currentContainer = container.current!;
+      const currentContainer = throwIfNull(container.current);
       const { top, left } = currentContainer.getBoundingClientRect();
       currentContainer.style.top = `${top}px`;
       currentContainer.style.left = `${left}px`;
@@ -236,7 +261,7 @@ export function Draggable(properties: DraggableProperties) {
       setState("dragging");
     };
 
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer.addEventListener("mousedown", onDown);
     currentContainer.addEventListener("touchstart", onDown);
@@ -266,15 +291,16 @@ export function Draggable(properties: DraggableProperties) {
       >
         <div style={{ gridArea: "stack" }}>
           <GhostContext.Provider value={{ ...ghostSize }}>
-            {state !== "idle" && properties.ghost}
+            {state !== "idle" && ghost}
           </GhostContext.Provider>
         </div>
         <IdleDraggableSizeContext.Provider
           value={{
-            propagateDimensions: (dimensions) =>
+            propagateDimensions: (dimensions) => {
               setGhostSize(
                 dimensions ?? { width: Number.NaN, height: Number.NaN }
-              ),
+              );
+            },
             leaveProxyMode: () => {
               // This is a no-op since the Draggable root is always in a proxy
               // mode.
@@ -288,10 +314,10 @@ export function Draggable(properties: DraggableProperties) {
               gridArea: "stack",
               position: dragging ? "fixed" : "static",
               touchAction: "none",
-              zIndex: !idle ? dragZIndex : "auto",
+              zIndex: idle ? "auto" : dragZIndex,
             }}
           >
-            <InnerDraggable>{properties.children}</InnerDraggable>
+            <InnerDraggable>{children}</InnerDraggable>
           </div>
         </IdleDraggableSizeContext.Provider>
       </DraggableContext.Provider>

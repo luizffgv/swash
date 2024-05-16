@@ -1,4 +1,4 @@
-import { DraggableContext } from "#/context/draggable";
+import * as ekranoplan from "ekranoplan";
 import {
   useContext,
   useEffect,
@@ -6,7 +6,10 @@ import {
   useRef,
   useState,
 } from "react";
+import { DraggableContext } from "#/context/draggable";
 import { InnerDraggable } from "#/components/InnerDraggable";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 /** Steps of the fade animation. */
 type FadeStep = "none" | "hiding" | "appearing";
@@ -50,11 +53,13 @@ export function FadeOnReturn(properties: Readonly<FadeOnReturnProperties>) {
   }, [dragging]);
 
   useEffect(() => {
-    if (step === "none") return;
+    if (step === "none") {
+      return;
+    }
 
     const animation = new Animation(
       new KeyframeEffect(
-        container.current!,
+        container.current,
         {
           opacity: [1, 0],
         },
@@ -68,7 +73,7 @@ export function FadeOnReturn(properties: Readonly<FadeOnReturnProperties>) {
       if (step === "hiding") {
         setStep("appearing");
       } else {
-        returnedPromiseResolve.current!();
+        throwIfNull(returnedPromiseResolve.current)();
       }
     });
     if (step === "hiding") {

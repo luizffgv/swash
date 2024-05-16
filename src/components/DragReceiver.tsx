@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react";
+import * as ekranoplan from "ekranoplan";
 import {
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
   SwashDropEvent,
 } from "#/events";
+import { useEffect, useRef } from "react";
 import { receiverTag } from "#/tags";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 export interface DragReceiverProperties {
   /** Callback for handling the {@link SwashDragEnterEvent} event. */
@@ -22,6 +25,7 @@ export interface DragReceiverProperties {
  */
 export function DragReceiver(properties: DragReceiverProperties) {
   const {
+    children,
     onSwashDragEnter = () => {},
     onSwashDragLeave = () => {},
     onSwashDrop = () => {},
@@ -31,14 +35,14 @@ export function DragReceiver(properties: DragReceiverProperties) {
 
   // Set the container as a DND receiver
   useEffect(() => {
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer[receiverTag] = true;
   }, []);
 
   // Setup listeners
   useEffect(() => {
-    const currentContainer = container.current!;
+    const currentContainer = throwIfNull(container.current);
 
     currentContainer.addEventListener("swash-drag-enter", onSwashDragEnter);
     currentContainer.addEventListener("swash-drag-leave", onSwashDragLeave);
@@ -57,7 +61,7 @@ export function DragReceiver(properties: DragReceiverProperties) {
     };
   }, [onSwashDragEnter, onSwashDragLeave, onSwashDrop]);
 
-  return <div ref={container}>{properties.children}</div>;
+  return <div ref={container}>{children}</div>;
 }
 
 export default DragReceiver;

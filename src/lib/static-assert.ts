@@ -1,7 +1,7 @@
 /**
- * Does a compile-time assertion that `T` extends `true`. This will cause a
- * compilation error if `T` does not extend `true`.
+ * Does a compile-time assertion that `_T` extends `true`. This will cause a
+ * compilation error if `_T` does not extend `true`.
  */
-export function staticAssert<T extends true>(message: string): void {}
+export function staticAssert<_T extends true>(_message: string): void {}
 
 export default staticAssert;

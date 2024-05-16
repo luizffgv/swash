@@ -1,6 +1,6 @@
-import { createContext } from "react";
-import { Payload } from "#/payload";
 import { DraggableStateMap } from "#/lib/draggable-state";
+import { Payload } from "#/payload";
+import { createContext } from "react";
 
 /** Context type for {@link DraggableContext}. */
 export interface DraggableContextType {
@@ -31,14 +31,14 @@ export interface DraggableContextType {
    * animations.
    * @param promise - Promise to wait for.
    */
-  setReturnedPromise(promise: Promise<void>): void;
+  setReturnedPromise: (promise: Promise<void>) => void;
 
   /**
    * Sets the payload to be sent to the DND receiver when the user drops the
    * draggable.
    * @param payload - Payload to be dropped.
    */
-  setPayload(payload: Payload): void;
+  setPayload: (payload: Payload) => void;
 }
 
 /** Default value for {@link DraggableContext}. */
