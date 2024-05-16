@@ -281,20 +281,18 @@ export function Draggable(properties: DraggableProperties) {
             },
           }}
         >
-          <InnerDraggable>
-            <div
-              ref={container}
-              style={{
-                cursor: dragging ? "grab" : "pointer",
-                gridArea: "stack",
-                position: dragging ? "fixed" : "static",
-                touchAction: "none",
-                zIndex: !idle ? dragZIndex : "auto",
-              }}
-            >
-              {properties.children}
-            </div>
-          </InnerDraggable>
+          <div
+            ref={container}
+            style={{
+              cursor: dragging ? "grab" : "pointer",
+              gridArea: "stack",
+              position: dragging ? "fixed" : "static",
+              touchAction: "none",
+              zIndex: !idle ? dragZIndex : "auto",
+            }}
+          >
+            <InnerDraggable>{properties.children}</InnerDraggable>
+          </div>
         </IdleDraggableSizeContext.Provider>
       </DraggableContext.Provider>
     </div>

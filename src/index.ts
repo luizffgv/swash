@@ -8,6 +8,8 @@ export { InnerDraggable } from "#/components/InnerDraggable";
 export { EmptySpaceGhost } from "#/components/ghosts/EmptySpaceGhost";
 export { ShrinkingGhost } from "#/components/ghosts/ShrinkingGhost";
 
+export { FadeOnReturn } from "#/components/return-animations/FadeOnReturn";
+
 export { Payload, EmptyPayload } from "#/payload";
 
 export * from "#/events";
