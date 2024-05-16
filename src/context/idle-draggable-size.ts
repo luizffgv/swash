@@ -23,7 +23,7 @@ export interface _IdleDraggableSizeContext {
    * Should be called whenever the component that is calling
    * {@link propagateDimensions} is about to stop.
    */
-  leaveProxyMode(): void;
+  leaveProxyMode: () => void;
 }
 
 /** Default value for {@link IdleDraggableSizeContext}. */
