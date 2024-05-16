@@ -1,35 +1,34 @@
-/*
-**This comment is not normative**, it is a part of the Obsidian notes taken
-while implementing.
-
-## Implementation with InnerDraggable
-
-An `InnerDraggable` wraps around a section of a component, measures itself
-via `ResizeObserver` and propagates the measurement up until it reaches a
-`Draggable`.
-
-We call this "propagation" because `InnerDraggable` may be nested, in this
-case the bottommost measurement will override the other measurements.
-
-For the measurements to propagate up in a single render, `InnerDraggable`
-propagates down a setter provided by the `Draggable`. This happens in a
-single render via context.
-
-### Overriding
-
-Since we want the bottommost `InnerDraggable` to override other
-`InnerDraggable`s, we can't simply rely on React's effect order, since higher
-effects will run later than deeper effects.
-
-Since deeper effects run first, the bottommost  `InnerDraggable` should have
-an effect that sets a flag so the parent `InnerDraggable` goes into **proxy
-mode**, disabling its self measurement reporting before it can happen. This
-flag propagates up so all intermediary `InnerDraggable`s are in proxy mode.
-
-A proxy `InnerDraggable` must leave proxy mode once it becomes bottommost.
-For this to happen, `InnerDraggable` should, during an effect cleanup, call a
-function provided by the parent `InnerDraggable` to tell it that it can leave
-proxy mode. */
+// **This comment is not normative**, it is a part of the Obsidian notes taken
+// while implementing.
+//
+// ## Implementation with InnerDraggable
+//
+// An `InnerDraggable` wraps around a section of a component, measures itself
+// via `ResizeObserver` and propagates the measurement up until it reaches a
+// `Draggable`.
+//
+// We call this "propagation" because `InnerDraggable` may be nested, in this
+// case the bottommost measurement will override the other measurements.
+//
+// For the measurements to propagate up in a single render, `InnerDraggable`
+// propagates down a setter provided by the `Draggable`. This happens in a
+// single render via context.
+//
+// ### Overriding
+//
+// Since we want the bottommost `InnerDraggable` to override other
+// `InnerDraggable`s, we can't simply rely on React's effect order, since higher
+// effects will run later than deeper effects.
+//
+// Since deeper effects run first, the bottommost  `InnerDraggable` should have
+// an effect that sets a flag so the parent `InnerDraggable` goes into **proxy
+// mode**, disabling its self measurement reporting before it can happen. This
+// flag propagates up so all intermediary `InnerDraggable`s are in proxy mode.
+//
+// A proxy `InnerDraggable` must leave proxy mode once it becomes bottommost.
+// For this to happen, `InnerDraggable` should, during an effect cleanup, call a
+// function provided by the parent `InnerDraggable` to tell it that it can leave
+// proxy mode.
 
 import { useContext, useLayoutEffect, useRef } from "react";
 import { Dimensions } from "#/lib/dimensions";
