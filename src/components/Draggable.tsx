@@ -226,9 +226,6 @@ export function Draggable(properties: DraggableProperties) {
 
     // Begins dragging when the draggable is clicked.
     const onDown = (event: MouseEvent | TouchEvent) => {
-      if (!idle) {
-        return;
-      }
       if ("button" in event && event.button !== 0) {
         return;
       }
