@@ -32,8 +32,8 @@ function provided by the parent `InnerDraggable` to tell it that it can leave
 proxy mode. */
 
 import { useContext, useLayoutEffect, useRef } from "react";
-import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
 import { Dimensions } from "#/lib/dimensions";
+import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
 
 export interface InnerDraggableProperties {
   children: React.ReactNode;

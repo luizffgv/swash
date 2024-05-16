@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
 import {
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
   SwashDropEvent,
 } from "#/events";
+import { useEffect, useRef } from "react";
 import { receiverTag } from "#/tags";
 
 export interface DragReceiverProperties {

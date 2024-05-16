@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { GhostContext } from "#/context/ghost";
 import { DraggableContext } from "#/context/draggable";
+import { GhostContext } from "#/context/ghost";
 
 /** Properties for the {@link ShrinkingGhost} component. */
 export interface ShrinkingGhostProperties {

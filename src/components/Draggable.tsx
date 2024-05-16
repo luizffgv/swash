@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { EmptyPayload, Payload } from "#/payload";
 import {
+  ReplyHandler,
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
   SwashDropEvent,
-  ReplyHandler,
 } from "#/events";
-import { EmptyPayload, Payload } from "#/payload";
-import { receiverTag } from "#/tags";
-import { DraggableContext } from "#/context/draggable";
-import { GhostContext } from "#/context/ghost";
-import { DraggableState } from "#/lib/draggable-state";
-import { InnerDraggable } from "./InnerDraggable";
-import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions } from "#/lib/dimensions";
+import { DraggableContext } from "#/context/draggable";
+import { DraggableState } from "#/lib/draggable-state";
+import { GhostContext } from "#/context/ghost";
+import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
+import { InnerDraggable } from "./InnerDraggable";
+import { receiverTag } from "#/tags";
 
 export interface DraggableProperties {
   children: React.ReactNode;

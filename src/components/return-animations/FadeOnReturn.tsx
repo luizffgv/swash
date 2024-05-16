@@ -1,4 +1,3 @@
-import { DraggableContext } from "#/context/draggable";
 import {
   useContext,
   useEffect,
@@ -6,6 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { DraggableContext } from "#/context/draggable";
 import { InnerDraggable } from "#/components/InnerDraggable";
 
 /** Steps of the fade animation. */

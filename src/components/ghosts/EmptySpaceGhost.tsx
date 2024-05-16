@@ -1,5 +1,5 @@
-import { useContext } from "react";
 import { GhostContext } from "#/context/ghost";
+import { useContext } from "react";
 
 /**
  * An invisible ghost that fills the space previously occupied by the draggable.
