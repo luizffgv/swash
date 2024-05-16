@@ -7,10 +7,19 @@
     "url": "https://github.com/luizffgv/swash/issues"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^8.57.0",
     "@types/react": "^18.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-compiler": "^0.0.0-experimental-53bb89e-20240515",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-unicorn": "^53.0.0",
+    "globals": "^15.2.0",
     "rimraf": "^5.0.5",
     "tsc-alias": "^1.8.8",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.9.0"
   },
   "exports": {
     ".": {
@@ -39,10 +48,12 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "generate-types": "tsc -p tsconfig-types.json && tsc-alias -p tsconfig-types.json",
-    "prepare": "npm run rebuild && npm run regenerate-types",
+    "lint": "eslint .",
+    "prepare": "npm run lint && npm run rebuild && npm run regenerate-types",
     "rebuild": "rimraf lib tsconfig.tsbuildinfo && npm run build",
     "regenerate-types": "rimraf types tsconfig-types.tsbuildinfo && npm run generate-types",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "types": "types/index.d.ts"
 }
