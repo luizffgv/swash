@@ -1,3 +1,4 @@
+import * as ekranoplan from "ekranoplan";
 import {
   useContext,
   useEffect,
@@ -7,7 +8,8 @@ import {
 } from "react";
 import { DraggableContext } from "#/context/draggable";
 import { InnerDraggable } from "#/components/InnerDraggable";
-import { throwIfNull } from "ekranoplan/types/conversions";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 /** Steps of the fade animation. */
 type FadeStep = "none" | "hiding" | "appearing";

@@ -1,3 +1,4 @@
+import * as ekranoplan from "ekranoplan";
 import { EmptyPayload, Payload } from "#/payload";
 import {
   ReplyHandler,
@@ -13,7 +14,8 @@ import { GhostContext } from "#/context/ghost";
 import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
 import { InnerDraggable } from "./InnerDraggable";
 import { receiverTag } from "#/tags";
-import { throwIfNull } from "ekranoplan/types/conversions";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 export interface DraggableProperties {
   children: React.ReactNode;

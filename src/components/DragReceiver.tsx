@@ -1,3 +1,4 @@
+import * as ekranoplan from "ekranoplan";
 import {
   SwashDragEnterEvent,
   SwashDragLeaveEvent,
@@ -5,7 +6,8 @@ import {
 } from "#/events";
 import { useEffect, useRef } from "react";
 import { receiverTag } from "#/tags";
-import { throwIfNull } from "ekranoplan/types/conversions";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 export interface DragReceiverProperties {
   /** Callback for handling the {@link SwashDragEnterEvent} event. */

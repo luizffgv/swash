@@ -30,10 +30,12 @@
 // function provided by the parent `InnerDraggable` to tell it that it can leave
 // proxy mode.
 
+import * as ekranoplan from "ekranoplan";
 import { useContext, useLayoutEffect, useRef } from "react";
 import { Dimensions } from "#/lib/dimensions";
 import { IdleDraggableSizeContext } from "#/context/idle-draggable-size";
-import { throwIfNull } from "ekranoplan/types/conversions";
+
+const throwIfNull = ekranoplan.conversions.throwIfNull;
 
 export interface InnerDraggableProperties {
   children: React.ReactNode;
