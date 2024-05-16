@@ -30,7 +30,7 @@ export interface DraggableProperties {
 }
 
 export function Draggable(properties: DraggableProperties) {
-  const { onReply, activeZIndex: dragZIndex = 1 } = properties;
+  const { children, ghost, onReply, activeZIndex: dragZIndex = 1 } = properties;
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -288,7 +288,7 @@ export function Draggable(properties: DraggableProperties) {
       >
         <div style={{ gridArea: "stack" }}>
           <GhostContext.Provider value={{ ...ghostSize }}>
-            {state !== "idle" && properties.ghost}
+            {state !== "idle" && ghost}
           </GhostContext.Provider>
         </div>
         <IdleDraggableSizeContext.Provider
@@ -313,7 +313,7 @@ export function Draggable(properties: DraggableProperties) {
               zIndex: idle ? "auto" : dragZIndex,
             }}
           >
-            <InnerDraggable>{properties.children}</InnerDraggable>
+            <InnerDraggable>{children}</InnerDraggable>
           </div>
         </IdleDraggableSizeContext.Provider>
       </DraggableContext.Provider>

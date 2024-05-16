@@ -22,6 +22,7 @@ export interface DragReceiverProperties {
  */
 export function DragReceiver(properties: DragReceiverProperties) {
   const {
+    children,
     onSwashDragEnter = () => {},
     onSwashDragLeave = () => {},
     onSwashDrop = () => {},
@@ -57,7 +58,7 @@ export function DragReceiver(properties: DragReceiverProperties) {
     };
   }, [onSwashDragEnter, onSwashDragLeave, onSwashDrop]);
 
-  return <div ref={container}>{properties.children}</div>;
+  return <div ref={container}>{children}</div>;
 }
 
 export default DragReceiver;
