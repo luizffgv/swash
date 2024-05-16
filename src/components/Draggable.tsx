@@ -93,7 +93,7 @@ export function Draggable(properties: DraggableProperties) {
       return;
     }
 
-    hoveredReceiver.current?.dispatchEvent(
+    hoveredReceiver.current.dispatchEvent(
       new SwashDragLeaveEvent(payload, onReply)
     );
     hoveredReceiver.current = undefined;
