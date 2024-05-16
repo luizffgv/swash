@@ -56,7 +56,7 @@ export function FadeOnReturn(properties: Readonly<FadeOnReturnProperties>) {
 
     const animation = new Animation(
       new KeyframeEffect(
-        container.current!,
+        container.current,
         {
           opacity: [1, 0],
         },
