@@ -208,7 +208,7 @@ export function Draggable(properties: DraggableProperties) {
      * something else.
      */
     let ignore = false;
-    returnedPromise.current.then(() => {
+    void returnedPromise.current.then(() => {
       if (!ignore) {
         setState("idle");
       }
