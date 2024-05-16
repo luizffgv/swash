@@ -310,7 +310,7 @@ export function Draggable(properties: DraggableProperties) {
               gridArea: "stack",
               position: dragging ? "fixed" : "static",
               touchAction: "none",
-              zIndex: !idle ? dragZIndex : "auto",
+              zIndex: idle ? "auto" : dragZIndex,
             }}
           >
             <InnerDraggable>{properties.children}</InnerDraggable>
