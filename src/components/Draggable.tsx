@@ -293,10 +293,11 @@ export function Draggable(properties: DraggableProperties) {
         </div>
         <IdleDraggableSizeContext.Provider
           value={{
-            propagateDimensions: (dimensions) =>
+            propagateDimensions: (dimensions) => {
               setGhostSize(
                 dimensions ?? { width: Number.NaN, height: Number.NaN }
-              ),
+              );
+            },
             leaveProxyMode: () => {
               // This is a no-op since the Draggable root is always in a proxy
               // mode.
