@@ -39,15 +39,18 @@ export function Draggable(properties: DraggableProperties) {
   const [state, setState] = useState<DraggableState>("idle");
   let states;
   switch (state) {
-    case "idle":
+    case "idle": {
       states = { idle: true, dragging: false, returning: false } as const;
       break;
-    case "dragging":
+    }
+    case "dragging": {
       states = { idle: false, dragging: true, returning: false } as const;
       break;
-    case "returning":
+    }
+    case "returning": {
       states = { idle: false, dragging: false, returning: true } as const;
       break;
+    }
   }
   const { idle, dragging, returning } = states;
 
@@ -86,7 +89,9 @@ export function Draggable(properties: DraggableProperties) {
   // Fire a DND drag leave event when the state changes to not dragging if there
   // is a receiver that was being hovered.
   useEffect(() => {
-    if (!idle || hoveredReceiver.current == null) return;
+    if (!idle || hoveredReceiver.current == null) {
+      return;
+    }
 
     hoveredReceiver.current?.dispatchEvent(
       new SwashDragLeaveEvent(payload, onReply)
@@ -96,10 +101,14 @@ export function Draggable(properties: DraggableProperties) {
 
   // Logic to execute when the draggable is being dragged.
   useEffect(() => {
-    if (!dragging) return;
+    if (!dragging) {
+      return;
+    }
 
     const onUp = (event: MouseEvent | TouchEvent) => {
-      if ("button" in event && event.button !== 0) return;
+      if ("button" in event && event.button !== 0) {
+        return;
+      }
 
       event.preventDefault();
 
@@ -111,7 +120,9 @@ export function Draggable(properties: DraggableProperties) {
         const touch = [...event.changedTouches].find(
           ({ identifier }) => identifier === touchID.current
         );
-        if (touch == null) return;
+        if (touch == null) {
+          return;
+        }
       }
 
       hoveredReceiver.current?.dispatchEvent(
@@ -131,7 +142,9 @@ export function Draggable(properties: DraggableProperties) {
         const touch = [...event.changedTouches].find(
           ({ identifier }) => identifier === touchID.current
         );
-        if (touch == null) return;
+        if (touch == null) {
+          return;
+        }
         ({ clientX: eventX, clientY: eventY } = touch);
       } else if (event instanceof MouseEvent && touchID.current == null) {
         ({ clientX: eventX, clientY: eventY } = event);
@@ -180,7 +193,9 @@ export function Draggable(properties: DraggableProperties) {
 
   // Wait for the draggable to be returned before idling.
   useEffect(() => {
-    if (!returning) return;
+    if (!returning) {
+      return;
+    }
 
     if (returnedPromise.current == null) {
       setState("idle");
@@ -194,7 +209,9 @@ export function Draggable(properties: DraggableProperties) {
      */
     let ignore = false;
     returnedPromise.current.then(() => {
-      if (!ignore) setState("idle");
+      if (!ignore) {
+        setState("idle");
+      }
     });
 
     return () => {
@@ -203,13 +220,21 @@ export function Draggable(properties: DraggableProperties) {
   }, [state]);
 
   useEffect(() => {
-    if (!idle) return;
+    if (!idle) {
+      return;
+    }
 
     // Begins dragging when the draggable is clicked.
     const onDown = (event: MouseEvent | TouchEvent) => {
-      if (!idle) return;
-      if ("button" in event && event.button !== 0) return;
-      if (!event.cancelable) return;
+      if (!idle) {
+        return;
+      }
+      if ("button" in event && event.button !== 0) {
+        return;
+      }
+      if (!event.cancelable) {
+        return;
+      }
 
       event.preventDefault();
 

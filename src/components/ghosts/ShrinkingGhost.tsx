@@ -31,7 +31,9 @@ export function ShrinkingGhost(properties: ShrinkingGhostProperties) {
       });
 
       return () => {
-        if (handle != null) cancelAnimationFrame(handle);
+        if (handle != null) {
+          cancelAnimationFrame(handle);
+        }
         setShrinked(false);
       };
     }

@@ -50,7 +50,9 @@ export function FadeOnReturn(properties: Readonly<FadeOnReturnProperties>) {
   }, [dragging]);
 
   useEffect(() => {
-    if (step === "none") return;
+    if (step === "none") {
+      return;
+    }
 
     const animation = new Animation(
       new KeyframeEffect(

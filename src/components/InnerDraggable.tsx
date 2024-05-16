@@ -74,7 +74,9 @@ export function InnerDraggable(properties: InnerDraggableProperties) {
 
       selfDimensions.current = { width, height };
 
-      if (!proxyMode.current) propagateDimensions(selfDimensions.current);
+      if (!proxyMode.current) {
+        propagateDimensions(selfDimensions.current);
+      }
     });
     observer.observe(containerRef.current!);
 
