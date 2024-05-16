@@ -15,14 +15,6 @@ export class SwashReplyableEvent extends Event {
   protected onReply?: ReplyHandler | undefined;
 
   /**
-   * Constructs a new {@link SwashReplyableEvent}.
-   * @param arguments_ - Same as {@link Event | event's} constructor parameters.
-   */
-  constructor(...arguments_: ConstructorParameters<typeof Event>) {
-    super(...arguments_);
-  }
-
-  /**
    * Sends a payload to the draggable that triggered the event.
    * @param payload - Payload to send.
    */
